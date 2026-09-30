@@ -51,14 +51,6 @@ form.addEventListener("submit", async (event) => {
         });
 
         const data = await response.json();
-        /*
-         * Python returns:
-         *
-         * {
-         *     valid: true/false,
-         *     message: "..."
-         * }
-         */
 
         showModal(
             data.valid,
@@ -95,10 +87,7 @@ function showModal(success, title, message) {
 
     }
     resultTitle.textContent = title;
-    /*
-     * Preserve line breaks from your Python IPv6 result.
-     */
-
+    
     resultMessage.textContent = message;
     modal.classList.add("active");
 }
