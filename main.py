@@ -1,21 +1,38 @@
+from flask import Flask, render_template, request, jsonify
+
 from ipv4 import is_valid_ipv4
 from ipv6 import is_valid_ipv6
 
-continue_program = "y"
 
-while continue_program == "y":
+app = Flask(__name__)
 
-    choice = input("Choose IP version (4/6): ")
 
-    if choice == "4":
-        ip = input("Enter an IPv4 address: ")
-        print(is_valid_ipv4(ip))
+@app.route("/")
+def index():
+    return render_template("index.html")
 
-    elif choice == "6":
-        ip = input("Enter an IPv6 address: ")
-        print(is_valid_ipv6(ip))
+@app.route("/validate", methods=["POST"])
+def validate():
 
+    data = request.get_json()
+
+    version = data.get("version")
+    ip = data.get("ip")
+
+    if version == "4":
+        result = is_valid_ipv4(ip)
+        valid = "is valid" in result
+    elif version == "6":
+        result = is_valid_ipv6(ip)
+        valid = "is valid" in result
     else:
-        print("Invalid choice. Please choose 4 or 6.")
 
-    continue_program = input("Do you want to continue? (y/n): ").lower()
+        result = "Invalid IP version."
+        valid = False
+    return jsonify({
+        "valid": valid,
+        "message": result.strip()
+    })
+
+if __name__ == "__main__":
+    app.run(debug=True)
